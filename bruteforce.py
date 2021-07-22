@@ -85,12 +85,13 @@ def get_benefits():
 	for n in range(0, len(COST)):
 		cost = COST[n]
 		interest = INTEREST_RATE[n]
+		#print(cost)
+		while cost < 500:
+			for i in range(0, len(COST)):
+				cost = cost + COST[i]
+				interest = interest + INTEREST_RATE[i]
 
-		for i in range(0, len(COST)):
-			x = cost + COST[i]
-			z = interest + INTEREST_RATE[i]
-
-			print(x)
+				print(cost)
 #############################################
 # Tant que le cout est inférieur à 500
 # acheter une action

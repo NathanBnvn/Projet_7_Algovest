@@ -74,6 +74,13 @@ INTEREST_RATE = [
 
 MAX_COST = 500
 
+# Algo forcebrute - pseudo code
+# 
+#
+# Tant que le cout est inférieur
+#
+#
+
 def get_benefits():
 	#benefits = [COST[i] * INTEREST_RATE[i] / 100 for i in range(20)]
 
@@ -82,17 +89,27 @@ def get_benefits():
 	# 	fields = next(csv_reader)
 
 ############################################
+	a = {}
+
 	for n in range(0, len(COST)):
 		cost = COST[n]
+		action = ACTIONS[n]
 		interest = INTEREST_RATE[n]
-		#print(cost)
-		while cost < 500:
+		print(action)
+		while cost < MAX_COST:
 			for i in range(0, len(COST)):
-				cost = cost + COST[i]
-				interest = interest + INTEREST_RATE[i]
+				if not COST[n] == COST[i]:
+					cost = cost + COST[i]
+					action_1 = action + ', ' + ACTIONS[i]
+					interest = interest + INTEREST_RATE[i]
+					benefit = cost * interest / 100
+					if cost < MAX_COST:
+						#a[cost] = interest
+						print(benefit)
 
-				print(cost)
 #############################################
+
+
 # Tant que le cout est inférieur à 500
 # acheter une action
 

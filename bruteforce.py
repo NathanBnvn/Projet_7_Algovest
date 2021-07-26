@@ -25,6 +25,7 @@ ACTIONS = [
 "Action-20",
 ]
 
+
 COST = [
 	20,
 	30,
@@ -74,56 +75,49 @@ INTEREST_RATE = [
 
 MAX_COST = 500
 
-# Algo forcebrute - pseudo code
-# 
-#
-# Tant que le cout est inférieur
-#
-#
+
+# def read_dataset():
+# 	with open('dataset.numbers', 'r', encoding='latin-1') as csv_dataset:
+# 		csv_reader = csv.reader(csv_dataset)
+# 		for row in csv_reader:
+# 			print(row[1])
+
 
 def get_benefits():
-	#benefits = [COST[i] * INTEREST_RATE[i] / 100 for i in range(20)]
-
-	# with open('dataset.numbers', 'r', encoding='latin-1') as csv_dataset:
-	# 	csv_reader = csv.reader(csv_dataset)
-	# 	fields = next(csv_reader)
-
-############################################
-	a = {}
+	create_csv_file()
 
 	for n in range(0, len(COST)):
 		cost = COST[n]
 		action = ACTIONS[n]
 		interest = INTEREST_RATE[n]
-		print(action)
+
 		while cost < MAX_COST:
 			for i in range(0, len(COST)):
 				if not COST[n] == COST[i]:
 					cost = cost + COST[i]
-					action_1 = action + ', ' + ACTIONS[i]
+					action_set = action + ' à ' + ACTIONS[i]
 					interest = interest + INTEREST_RATE[i]
 					benefit = cost * interest / 100
 					if cost < MAX_COST:
-						#a[cost] = interest
-						print(benefit)
+						estimation = {'actions': action_set, 'cost':cost, 'benefit': benefit}
+						save_estimates(estimation)
+	return
 
-#############################################
+def create_csv_file():
+	with open('estimates.csv', 'w', encoding='utf-8') as estimation_file:
+		estimation_file.write("ACTIONS, COÛT, BENEFICE\n")
 
 
-# Tant que le cout est inférieur à 500
-# acheter une action
+def save_estimates(estimation):
+	with open('estimates.csv', 'a', encoding='utf-8') as estimation_file:
+		estimation_file.write(estimation['actions'] + ', ' + str(estimation['cost']) + ', ' + str(estimation['benefit']) + '\n')
 
-	# cost = COST[0]
-	# i = 1
-	# while cost < 99:
-	# 	cost = cost + COST[i]
-	# 	i += 1
-	# 	print(cost)
 
 def main():
-	benef = get_benefits()
-	#print(benef)
+	#read_dataset()
+	get_benefits()
+
+
 
 if __name__ == '__main__':
 	main()
-

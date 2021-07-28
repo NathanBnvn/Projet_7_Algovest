@@ -2,89 +2,32 @@
 
 import csv
 
-ACTIONS = [
-"Action-1",
-"Action-2",
-"Action-3",
-"Action-4",
-"Action-5",
-"Action-6",
-"Action-7",
-"Action-8",
-"Action-9",
-"Action-10",
-"Action-11",
-"Action-12",
-"Action-13",
-"Action-14",
-"Action-15",
-"Action-16",
-"Action-17",
-"Action-18",
-"Action-19",
-"Action-20",
-]
-
-
-COST = [
-	20,
-	30,
-	50,
-	70,
-	60,
-	80,
-	22,
-	26,
-	48,
-	34,
-	42,
-	110,
-	38,
-	14,
-	18,
-	8,
-	4,
-	10,
-	24,
-	114,
-]
-
-
-INTEREST_RATE = [
-	5,
-	10,
-	15,
-	20,
-	17,
-	25,
-	7,
-	11,
-	13,
-	27,
-	17,
-	9,
-	23,
-	1,
-	3,
-	8,
-	12,
-	14,
-	21,
-	18,
-]
 
 MAX_COST = 500
 
+def read_dataset():
+	raw_interests = []
+	raw_costs = []
+	ACTIONS = [] 
 
-# def read_dataset():
-# 	with open('dataset.numbers', 'r', encoding='latin-1') as csv_dataset:
-# 		csv_reader = csv.reader(csv_dataset)
-# 		for row in csv_reader:
-# 			print(row[1])
+	with open('dataset.csv', 'r', encoding='utf-8') as csv_dataset:
+ 		csv_reader = csv.reader(csv_dataset)
+ 		for row in csv_reader:
+ 			ACTIONS.append(row[0])
+ 			raw_costs.append(row[1])
+ 			raw_interests.append(row[2])
+
+ 		ACTIONS.pop(0)
+ 		raw_costs.pop(0)
+ 		raw_interests.pop(0)
+
+ 		COST = [int(cost) for cost in raw_costs]
+ 		INTEREST_RATE = [int(interest) for interest in raw_interests]
+ 		get_benefits(ACTIONS, COST, INTEREST_RATE)
 
 
-def get_benefits():
-	create_csv_file()
+def get_benefits(ACTIONS, COST, INTEREST_RATE):
+	estimations = {'actions': [], 'cost': [], 'benefit': []}
 
 	for n in range(0, len(COST)):
 		cost = COST[n]
@@ -99,24 +42,22 @@ def get_benefits():
 					interest = interest + INTEREST_RATE[i]
 					benefit = cost * interest / 100
 					if cost < MAX_COST:
-						estimation = {'actions': action_set, 'cost':cost, 'benefit': benefit}
-						save_estimates(estimation)
-	return
-
-def create_csv_file():
-	with open('estimates.csv', 'w', encoding='utf-8') as estimation_file:
-		estimation_file.write("ACTIONS, COÛT, BENEFICE\n")
+						estimations['actions'].append(action_set) 
+						estimations['cost'].append(cost) 
+						estimations['benefit'].append(benefit)
+	get_max_value(estimations)
 
 
-def save_estimates(estimation):
-	with open('estimates.csv', 'a', encoding='utf-8') as estimation_file:
-		estimation_file.write(estimation['actions'] + ', ' + str(estimation['cost']) + ', ' + str(estimation['benefit']) + '\n')
+def get_max_value(estimations):
+	max_value = max(estimations['benefit'])
+	max_value_index = estimations['benefit'].index(max_value)
+	actions = estimations['actions'][max_value_index]
+	costs = estimations['cost'][max_value_index]
+	print(actions + ',  coût:' + str(costs) + ',  bénéfice:' + str(max_value))
 
 
 def main():
-	#read_dataset()
-	get_benefits()
-
+	read_dataset()
 
 
 if __name__ == '__main__':

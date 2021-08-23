@@ -1,11 +1,8 @@
 # coding: utf-8
 
 import csv
-import itertools as it
-
 
 MAX_COST = 500
-y = []
 
 def read_dataset():
 	raw_interests = []
@@ -40,11 +37,15 @@ def get_benefits(ACTIONS, COST, INTEREST_RATE):
 		actions = []
 
 		while cost < MAX_COST:
+			current_action = action + ':'
+			actions.insert(0, current_action)
+
 			for i in range(0, len(COST)):
 				if not COST[n] == COST[i]:
 					cost = cost + COST[i]
 					benefit = COST[i] * INTEREST_RATE[i] / 100 + benefit
-					actions.append(action + ': ' + ACTIONS[i])
+
+					actions.append(ACTIONS[i])
 
 					if cost < MAX_COST:
 						estimations['actions'].append(actions)
@@ -52,7 +53,7 @@ def get_benefits(ACTIONS, COST, INTEREST_RATE):
 						estimations['benefit'].append(benefit)
 
 	get_max_value(estimations)
-
+	#print(estimations['actions'])
 
 
 def get_max_value(estimations):
@@ -60,7 +61,8 @@ def get_max_value(estimations):
 	max_value_index = estimations['benefit'].index(max_value)
 	actions = estimations['actions'][max_value_index]
 	costs = estimations['cost'][max_value_index]
-	print('actions:' + str(actions) + ',  coût:' + str(costs) + ',  bénéfice:' + str(max_value))
+	#print('actions:' + str(actions) + ',  coût:' + str(costs) + ',  bénéfice:' + str(max_value))
+	print(estimations['actions'])
 
 def create_csv_file():
 	with open('estimates.csv', 'w', encoding='utf-8') as estimation_file:
@@ -72,7 +74,6 @@ def save_estimates(estimation):
 
 def main():
 	read_dataset()
-
 
 if __name__ == '__main__':
 	main()

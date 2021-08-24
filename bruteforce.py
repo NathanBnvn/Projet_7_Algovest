@@ -48,7 +48,7 @@ def get_benefits(ACTIONS, COST, INTEREST_RATE):
 					actions.append(ACTIONS[i])
 
 					if cost < MAX_COST:
-						estimations['actions'].append(actions)
+						estimations['actions'].append(actions.copy())
 						estimations['cost'].append(cost)
 						estimations['benefit'].append(benefit)
 
@@ -61,8 +61,8 @@ def get_max_value(estimations):
 	max_value_index = estimations['benefit'].index(max_value)
 	actions = estimations['actions'][max_value_index]
 	costs = estimations['cost'][max_value_index]
-	#print('actions:' + str(actions) + ',  coût:' + str(costs) + ',  bénéfice:' + str(max_value))
-	print(estimations['actions'])
+	print('actions:' + str(actions) + ',  coût:' + str(costs) + ',  bénéfice:' + str(max_value))
+	#print(estimations['actions'])
 
 def create_csv_file():
 	with open('estimates.csv', 'w', encoding='utf-8') as estimation_file:

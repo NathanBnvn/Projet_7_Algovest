@@ -1,7 +1,5 @@
 import csv
 
-#costs = [20, 30, 50, 70, 60, 80, 22, 26, 48, 34, 42, 110, 38, 14, 18, 8, 4, 10, 24, 114]
-#interests = [5, 10, 15, 20, 17, 25, 7, 11, 13, 27, 17, 9, 23, 1, 3, 8, 12, 14, 21, 18]
 MAX_CAPACITY = 500
 
 ###################################### version 3
@@ -24,31 +22,37 @@ def read_dataset():
 
         COST = [int(cost) for cost in raw_costs]
         INTEREST_RATE = [int(interest) for interest in raw_interests]
-        INTEREST_NUMBER = len(INTEREST_RATE)
-        knapSack(MAX_CAPACITY, COST, INTEREST_RATE, INTEREST_NUMBER)
+        #INTEREST_NUMBER = len(INTEREST_RATE)
+        
+        BENEFIT = []
 
-def knapSack(max_capacity, costs, interests, interests_number):
- 
+        for i in range(20):
+            benefit = COST[i] * INTEREST_RATE[i] / 100
+            BENEFIT.append(benefit)
+
+        BENEFIT_NUMBER = len(BENEFIT)
+        print(knapSack(MAX_CAPACITY, COST, BENEFIT, BENEFIT_NUMBER))
+
+def knapSack(max_capacity, costs, interests, interest_number):
     # Base Case
-    if interests_number == 0 or max_capacity == 0:
+    if interest_number == 0 or max_capacity == 0:
         return 0
  
     # If weight of the nth item is
     # more than Knapsack of capacity W,
     # then this item cannot be included
     # in the optimal solution
-    if (costs[interests_number-1] > max_capacity):
-        return knapSack(max_capacity, costs, interests, interests_number-1)
+    if (costs[interest_number-1] > max_capacity):
+        return knapSack(max_capacity, costs, interests, interest_number-1)
  
     # return the maximum of two cases:
     # (1) nth item included
     # (2) not included
     else:
         return max(
-            interests[interests_number-1] + knapSack(
-                max_capacity-costs[interests_number-1], costs, interests, interests_number-1),
-            knapSack(max_capacity, costs, interests, interests_number-1))
-
+            interests[interest_number - 1] + knapSack(
+                max_capacity-costs[interest_number-1], costs, interests, interest_number-1),
+            knapSack(max_capacity, costs, interests, interest_number-1))
 
 
 def main():

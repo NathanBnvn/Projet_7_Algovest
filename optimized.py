@@ -7,7 +7,8 @@ MAX_CAPACITY = 500
 def read_dataset():
     raw_interests = []
     raw_costs = []
-    ACTIONS = [] 
+    ACTIONS = []
+    estimations = {'actions': [], 'cost': [], 'benefit': []}
 
     with open('dataset.csv', 'r', encoding='utf-8') as csv_dataset:
         csv_reader = csv.reader(csv_dataset)
@@ -22,8 +23,6 @@ def read_dataset():
 
         COST = [int(cost) for cost in raw_costs]
         INTEREST_RATE = [int(interest) for interest in raw_interests]
-        #INTEREST_NUMBER = len(INTEREST_RATE)
-        
         BENEFIT = []
 
         for i in range(20):
@@ -31,29 +30,37 @@ def read_dataset():
             BENEFIT.append(benefit)
 
         BENEFIT_NUMBER = len(BENEFIT)
-        print(knapSack(MAX_CAPACITY, COST, BENEFIT, BENEFIT_NUMBER))
+        for x in range(BENEFIT_NUMBER):
+            estimations['actions'].append(ACTIONS[x])
+            estimations['cost'].append(COST[x])
+            estimations['benefit'].append(BENEFIT[x])
 
-def knapSack(max_capacity, costs, interests, interest_number):
-    # Base Case
-    if interest_number == 0 or max_capacity == 0:
-        return 0
- 
-    # If weight of the nth item is
-    # more than Knapsack of capacity W,
-    # then this item cannot be included
-    # in the optimal solution
-    if (costs[interest_number-1] > max_capacity):
-        return knapSack(max_capacity, costs, interests, interest_number-1)
- 
-    # return the maximum of two cases:
-    # (1) nth item included
-    # (2) not included
-    else:
-        return max(
-            interests[interest_number - 1] + knapSack(
-                max_capacity-costs[interest_number-1], costs, interests, interest_number-1),
-            knapSack(max_capacity, costs, interests, interest_number-1))
+        print(knapSack(MAX_CAPACITY, estimations, BENEFIT_NUMBER))
 
+def knapSack(capacity, estimations, o):
+
+    matrix = [[0 for x in range(capacity + 1)] for x in range(len(estimations['actions']) + 1)]
+
+    for i in range(1, len(estimations['actions']) + 1):
+        for w in range(1, capacity + 1):
+            if estimations['cost'][i-1] <= w:
+                matrix[i][w] = max(estimations['benefit'][i-1] + matrix[i-1][w-estimations['cost'][i-1]], matrix[i-1][w])
+            else:
+                matrix[i][w] = matrix[i-1][w]
+
+    selected_elements = []
+    o = len(estimations['actions'])
+
+    while o > 0:
+        e = estimations['actions'][o-1]
+        print(e)
+        if matrix[o][w] == matrix[o-1][w-estimations['cost'][o-1]] + estimations['benefit'][o-1]:
+            selected_elements.append(e)
+            w -= estimations['cost'][o-1]
+
+        o -= 1
+
+    return matrix[-1][-1], selected_elements
 
 def main():
     read_dataset()

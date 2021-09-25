@@ -23,14 +23,37 @@ def read_dataset():
         raw_costs.pop(0)
         raw_interests.pop(0)
 
-        COST = [int(float(cost)) for cost in raw_costs]
+        COST = []
 
-        INTEREST_RATE = [int(float(interest)) for interest in raw_interests]
+        for cost in raw_costs:
+            try :
+                y = int(cost)
+                COST.append(y)
+            except ValueError:
+                x = float(cost) * 100
+                w = int(x)
+                #print(w)
+                COST.append(w)
+
+
+        INTEREST_RATE = []
+
+        for interest in raw_interests:
+            try :
+                y = int(interest)
+                INTEREST_RATE.append(y)
+            except ValueError:
+                x = float(interest) * 100
+                w = int(x)
+                #print(w)
+                INTEREST_RATE.append(w)
+
+
         BENEFIT = []
 
         for i in range(len(COST)):
             benefit = COST[i] * INTEREST_RATE[i] / 100
-            BENEFIT.append(benefit)
+            BENEFIT.append(int(benefit))
 
         BENEFIT_NUMBER = len(BENEFIT)
 
@@ -39,12 +62,13 @@ def read_dataset():
             estimations['cost'].append(COST[x])
             estimations['benefit'].append(BENEFIT[x])
 
-        
+        #print(len(estimations['benefit']))
+        #print(len(estimations['actions']))
         print(stockPortfolio(MAX_CAPACITY, estimations, BENEFIT_NUMBER))
 
 def stockPortfolio(capacity, estimations, benefit_number):
 
-    matrix = [[0 for x in range(capacity + 1)] for x in range(len(estimations['actions']) + 1)]
+    matrix = [[0 for x in range(capacity + 1)] for x in range(len(estimations['cost']) + 1)]
 
     for i in range(1, len(estimations['actions']) + 1):
         for w in range(1, capacity + 1):

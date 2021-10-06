@@ -1,18 +1,16 @@
+# coding: utf-8
+
 import csv
 
 MAX_CAPACITY = 500
 
-###################################### version 3
-
-def read_dataset():
+def read_dataset(MAX_CAPACITY):
     raw_interests = []
     raw_costs = []
     ACTIONS = []
     estimations = {'actions': [], 'cost': [], 'benefit': []}
 
-    select_dataset = input('Enter the dataset file name : ')
-
-    with open(select_dataset + '.csv', 'r', encoding='utf-8') as csv_dataset:
+    with open('dataset2_Python+P7.csv', 'r') as csv_dataset:
         csv_reader = csv.reader(csv_dataset)
         for row in csv_reader:
             ACTIONS.append(row[0])
@@ -23,75 +21,66 @@ def read_dataset():
         raw_costs.pop(0)
         raw_interests.pop(0)
 
-        COST = []
-
-        for cost in raw_costs:
-            try :
-                y = int(cost)
-                COST.append(y)
-            except ValueError:
-                x = float(cost) * 100
-                w = int(x)
-                #print(w)
-                COST.append(w)
-
-
-        INTEREST_RATE = []
-
-        for interest in raw_interests:
-            try :
-                y = int(interest)
-                INTEREST_RATE.append(y)
-            except ValueError:
-                x = float(interest) * 100
-                w = int(x)
-                #print(w)
-                INTEREST_RATE.append(w)
-
-
-        BENEFIT = []
-
-        for i in range(len(COST)):
-            benefit = COST[i] * INTEREST_RATE[i] / 100
-            BENEFIT.append(int(benefit))
-
-        BENEFIT_NUMBER = len(BENEFIT)
-
-        for x in range(BENEFIT_NUMBER):
+        for x in range(len(ACTIONS)):
             estimations['actions'].append(ACTIONS[x])
-            estimations['cost'].append(COST[x])
-            estimations['benefit'].append(BENEFIT[x])
+            estimations['cost'].append((int(float(raw_costs[x]) * 100)))
+            estimations['benefit'].append(int(float(raw_costs[x]) * 100) * int(float(raw_interests[x]) * 100) / 1000000)
 
-        #print(len(estimations['benefit']))
-        #print(len(estimations['actions']))
-        print(stockPortfolio(MAX_CAPACITY, estimations, BENEFIT_NUMBER))
+        BENEFIT_LEN = len(estimations['benefit'])
+        capacity = MAX_CAPACITY * 100
 
-def stockPortfolio(capacity, estimations, benefit_number):
+        print(stockPortfolio(capacity, estimations, BENEFIT_LEN))
 
-    matrix = [[0 for x in range(capacity + 1)] for x in range(len(estimations['cost']) + 1)]
+def stockPortfolio(capacity, estimations, benefit_len):
 
-    for i in range(1, len(estimations['actions']) + 1):
+    # création d'une matrice
+    matrix = [[0 for _ in range(capacity + 1)] for _ in range(benefit_len + 1)]
+
+    # incrémente de 1 jusqu'au nombre d'actions
+    # puis incrémente de 1 jusqu'à la charge maximale du sac
+    for i in range(1, benefit_len + 1):
         for w in range(1, capacity + 1):
             if estimations['cost'][i-1] <= w:
-                matrix[i][w] = max(estimations['benefit'][i-1] + matrix[i-1][w-estimations['cost'][i-1]], matrix[i-1][w])
+                estimate_cost = w-estimations['cost'][i-1]
+                if estimate_cost < capacity:
+                    matrix[i][w] = max(estimations['benefit'][i-1] + matrix[i-1][estimate_cost], matrix[i-1][w])
+                else:
+                    matrix[i][w] = matrix[i-1][w]
             else:
                 matrix[i][w] = matrix[i-1][w]
 
-    selected_elements = []
-    benefit_number = len(estimations['actions'])
 
-    while benefit_number > 0:
-        e = estimations['actions'][benefit_number-1]
-        if matrix[benefit_number][w] == matrix[benefit_number-1][w-estimations['cost'][benefit_number-1]] + estimations['benefit'][benefit_number-1]:
-            selected_elements.append(e)
-            w -= estimations['cost'][benefit_number-1]
+    selected_actions = {'action': [], 'cost': [], 'benefit': []}
 
-        benefit_number -= 1
+    while benefit_len >= 0:
+        price = 0
 
-    return matrix[-1][-1], selected_elements
+        action = estimations['actions'][benefit_len-1]
+        cost = estimations['cost'][benefit_len-1]
+        benefit = estimations['benefit'][benefit_len-1]
+        estimate_cost = w-estimations['cost'][benefit_len-1]
 
-def main():
-    read_dataset()
+        if estimate_cost <= capacity and estimate_cost > 0:
+            if matrix[benefit_len][w] == matrix[benefit_len-1][estimate_cost] + estimations['benefit'][benefit_len-1]:
+                if cost >= 0 and benefit > 0:
+                    selected_actions['action'].append(action)
+                    selected_actions['cost'].append(int(cost / 100))
+                    selected_actions['benefit'].append(benefit)
+                    total_price = sum(selected_actions['cost'])
+
+                    w -= estimations['cost'][benefit_len-1]
+
+        benefit_len -= 1
+
+    for x in range(len(selected_actions['action'])):
+        print(selected_actions['action'][x] + ', cost :' + str(selected_actions['cost'][x]) + '€')
+ 
+    print('total cost: ' + str(total_price) + '€')
+    print(sum(selected_actions['benefit']))
+    total_benefit = 'total benefit: ' + str(matrix[-1][-1]) + '€'
+
+    return total_benefit
+
 
 if __name__ == '__main__':
-    main()
+    read_dataset(MAX_CAPACITY)
